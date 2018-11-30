@@ -19,11 +19,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 // get all todos
 app.get('/api/v1/todos', (req, res) => {
 
-    client.query('select title, description from todo')
+    client.query('select id, title, description from todo')
         .then(rs => {
             return res.status(200).send({
-                success: 'true',
-                message: 'todos retrieved successfully',
                 todos: rs.rows
             })
         })
@@ -31,7 +29,7 @@ app.get('/api/v1/todos', (req, res) => {
             console.error(e);
             return res.status(500).send({
                 success: 'false',
-                messsage: e.message
+                message: e.message
             })
         })
 });
@@ -39,25 +37,37 @@ app.get('/api/v1/todos', (req, res) => {
 app.get('/api/v1/todos/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
 
-    let todoFromDb;
-
-    db.map((todo) => {
-        if (todo.id === id) {
-            todoFromDb = todo;
-        }
-    });
-    if (todoFromDb) {
-        return res.status(200).send({
-            success: 'true',
-            message: 'todo retrieved successfully',
-            todoFromDb,
-        });
-    } else {
-        return res.status(404).send({
-            success: 'false',
-            message: 'todo does not exist',
-        });
+    const query = {
+        name: 'findById',
+        text: 'select id, title, description from todo where id = $1',
+        values: [id]
     }
+    client.query(query)
+        .then(rs => {
+            if (rs.rows.length == 1) {
+                let row = rs.rows[0];
+                return res.status(200).send(
+                    row
+                );
+            } else if (rs.rows.length == 0) {
+                return res.status(404).send({
+                    success: 'false',
+                    message: 'todo does not exist',
+                });
+            } else {
+                return res.status(500).send({
+                    success: 'false',
+                    message: 'More than one row found!'
+                })
+            }
+        })
+        .catch(e => {
+            console.error(e);
+            return res.status(500).send({
+                success: 'false',
+                message: e.message
+            })
+        })
 });
 
 app.post('/api/v1/todos', (req, res) => {
@@ -73,13 +83,17 @@ app.post('/api/v1/todos', (req, res) => {
         });
     }
 
-    const todo = {
-        id: db.length + 1,
-        title: req.body.title,
-        description: req.body.description
-    }
+    const text = 'INSERT INTO todo(title, description) VALUES($1, $2) RETURNING *'
+    const values = [req.body.title, req.body.description]
 
-    db.push(todo);
+    let todo;
+    client.query(text, values, (err, res) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            todo = res.rows[0];
+        }
+    });
 
     return res.status(201).send({
         success: 'true',
