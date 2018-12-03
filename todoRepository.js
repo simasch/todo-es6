@@ -2,6 +2,7 @@ import pg from 'pg';
 import Todo from './todo';
 
 export default class TodoRepository {
+
     constructor() {
         this.pool = new pg.Pool({
             connectionString: 'postgresql://todo:todo@localhost:5432/todo',
@@ -44,11 +45,11 @@ export default class TodoRepository {
                     } else {
                         client.query('select id, title, description from todo where id = $1', [id])
                             .then(rs => {
-                                if (rs.rows.length == 1) {
+                                if (rs.rows.length === 1) {
                                     let row = rs.rows[0];
                                     release();
                                     resolve(new Todo(row.id, row.title, row.description));
-                                } else if (rs.rows.length == 0) {
+                                } else if (rs.rows.length === 0) {
                                     release();
                                     resolve(null);
                                 } else {
@@ -73,8 +74,8 @@ export default class TodoRepository {
                     release();
                     reject(err);
                 } else {
-                    const text = 'INSERT INTO todo(title, description) VALUES($1, $2) RETURNING *'
-                    const values = [todo.title, todo.description]
+                    const text = 'INSERT INTO todo(title, description) VALUES($1, $2) RETURNING *';
+                    const values = [todo.title, todo.description];
 
                     client.query(text, values, (err, res) => {
                         if (err) {
