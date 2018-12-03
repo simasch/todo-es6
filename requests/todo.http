@@ -2,6 +2,10 @@ GET http://localhost:5000/api/v1/todos
 
 ###
 
+GET http://localhost:5000/api/v1/todos/1
+
+###
+
 POST http://localhost:5000/api/v1/todos
 Content-Type: application/json
 
@@ -9,5 +13,19 @@ Content-Type: application/json
   "title": "Book flight",
   "description": "ZRH - AUS"
 }
+
+###
+
+PUT http://localhost:5000/api/v1/todos/1
+Content-Type: application/json
+
+{
+  "title": "Book flight",
+  "description": "ZRH - IAD"
+}
+
+###
+
+DELETE http://localhost:5000/api/v1/todos/3
 
 ###
