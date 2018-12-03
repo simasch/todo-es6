@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import pg from 'pg';
+import Todo from './todo';
 
 // Set up PostgreSQL
 const client = new pg.Client({
@@ -20,8 +21,13 @@ app.get('/api/v1/todos', (req, res) => {
 
     client.query('select id, title, description from todo')
         .then(rs => {
+            let todos = [];
+            let rows = rs.rows;
+            for (let row of rows) {
+                todos.push(new Todo(row.id, row.title, row.description))
+            }
             return res.status(200).send({
-                todos: rs.rows
+                todos
             })
         })
         .catch(e => {
