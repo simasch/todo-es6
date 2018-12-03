@@ -19,11 +19,7 @@ app.get('/api/v1/todos', (req, res) => {
             return res.status(200).json(todos);
         })
         .catch(e => {
-            console.error(e);
-            return res.status(500).json({
-                success: 'false',
-                message: e.message
-            })
+            return send500(e, res);
         });
 });
 
@@ -35,23 +31,17 @@ app.get('/api/v1/todos/:id', (req, res) => {
             if (todo) {
                 return res.status(200).json(todo);
             } else {
-                return res.status(404).json({
-                    success: 'false',
-                    message: 'Todo does not exist',
-                });
+                return send404(res);
             }
         })
         .catch(e => {
-            console.error(e);
-            return res.status(500).json({
-                success: 'false',
-                message: e.message
-            })
+            return send500(e, res);
         });
 })
 ;
 
 app.post('/api/v1/todos', (req, res) => {
+
     if (!req.body.title) {
         return res.status(400).json({
             success: 'false',
@@ -74,11 +64,7 @@ app.post('/api/v1/todos', (req, res) => {
             });
         })
         .catch(e => {
-            console.error(e);
-            return res.status(500).json({
-                success: 'false',
-                message: e.message
-            })
+            return send500(e, res);
         });
 });
 
@@ -109,17 +95,10 @@ app.put('/api/v1/todos/:id', (req, res) => {
                     });
                 })
                 .catch(e => {
-                    console.error(e);
-                    return res.status(500).json({
-                        success: 'false',
-                        message: e.message
-                    })
+                    return send500(e, res);
                 });
         } else {
-            return res.status(404).json({
-                success: 'false',
-                message: 'Todo does not exist',
-            });
+            return send404(res);
         }
     });
 });
@@ -139,24 +118,31 @@ app.delete('/api/v1/todos/:id', (req, res) => {
                     });
                 })
                 .catch(e => {
-                    console.error(e);
-                    return res.status(500).json({
-                        success: 'false',
-                        message: e.message
-                    });
+                    return send500(e, res);
                 });
         } else {
-            return res.status(404).json({
-                success: 'false',
-                message: 'Todo does not exist',
-            });
+            return send404(res);
         }
     });
 });
+
+function send500(e, res) {
+    console.error(e);
+    return res.status(500).json({
+        success: 'false',
+        message: e.message
+    })
+}
+
+function send404(res) {
+    return res.status(404).json({
+        success: 'false',
+        message: 'Todo does not exist',
+    });
+}
 
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`)
 });
-
 
