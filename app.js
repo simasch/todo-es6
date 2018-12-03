@@ -16,13 +16,11 @@ const todoRepository = new TodoRepository();
 app.get('/api/v1/todos', (req, res) => {
     todoRepository.findAll()
         .then((todos) => {
-            return res.status(200).send({
-                todos
-            });
+            return res.status(200).json(todos);
         })
         .catch(e => {
             console.error(e);
-            return res.status(500).send({
+            return res.status(500).json({
                 success: 'false',
                 message: e.message
             })
@@ -35,11 +33,9 @@ app.get('/api/v1/todos/:id', (req, res) => {
     todoRepository.findById(id)
         .then((todo) => {
             if (todo) {
-                return res.status(200).send({
-                    todo
-                });
+                return res.status(200).json(todo);
             } else {
-                return res.status(404).send({
+                return res.status(404).json({
                     success: 'false',
                     message: 'Todo does not exist',
                 });
@@ -47,21 +43,22 @@ app.get('/api/v1/todos/:id', (req, res) => {
         })
         .catch(e => {
             console.error(e);
-            return res.status(500).send({
+            return res.status(500).json({
                 success: 'false',
                 message: e.message
             })
         });
-});
+})
+;
 
 app.post('/api/v1/todos', (req, res) => {
     if (!req.body.title) {
-        return res.status(400).send({
+        return res.status(400).json({
             success: 'false',
             message: 'title is required'
         });
     } else if (!req.body.description) {
-        return res.status(400).send({
+        return res.status(400).json({
             success: 'false',
             message: 'description is required'
         });
@@ -71,14 +68,14 @@ app.post('/api/v1/todos', (req, res) => {
 
     todoRepository.insert(todo)
         .then((todo) => {
-            return res.status(201).send({
+            return res.status(201).json({
                 success: 'true',
                 message: 'Todo created',
             });
         })
         .catch(e => {
             console.error(e);
-            return res.status(500).send({
+            return res.status(500).json({
                 success: 'false',
                 message: e.message
             })
@@ -87,12 +84,12 @@ app.post('/api/v1/todos', (req, res) => {
 
 app.put('/api/v1/todos/:id', (req, res) => {
     if (!req.body.title) {
-        return res.status(400).send({
+        return res.status(400).json({
             success: 'false',
             message: 'title is required'
         });
     } else if (!req.body.description) {
-        return res.status(400).send({
+        return res.status(400).json({
             success: 'false',
             message: 'description is required'
         });
@@ -106,20 +103,20 @@ app.put('/api/v1/todos/:id', (req, res) => {
 
             todoRepository.update(todo)
                 .then((todo) => {
-                    return res.status(200).send({
+                    return res.status(200).json({
                         success: 'true',
                         message: 'Todo update',
                     });
                 })
                 .catch(e => {
                     console.error(e);
-                    return res.status(500).send({
+                    return res.status(500).json({
                         success: 'false',
                         message: e.message
                     })
                 });
         } else {
-            return res.status(404).send({
+            return res.status(404).json({
                 success: 'false',
                 message: 'Todo does not exist',
             });
@@ -136,20 +133,20 @@ app.delete('/api/v1/todos/:id', (req, res) => {
 
             todoRepository.deleteById(id)
                 .then(rs => {
-                    return res.status(200).send({
+                    return res.status(200).json({
                         success: 'true',
                         message: 'todo deleted successfully'
                     });
                 })
                 .catch(e => {
                     console.error(e);
-                    return res.status(500).send({
+                    return res.status(500).json({
                         success: 'false',
                         message: e.message
                     });
                 });
         } else {
-            return res.status(404).send({
+            return res.status(404).json({
                 success: 'false',
                 message: 'Todo does not exist',
             });
