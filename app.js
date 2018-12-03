@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import db from './db/db';
 import pg from 'pg';
 
 // Set up PostgreSQL
@@ -104,72 +103,95 @@ app.post('/api/v1/todos', (req, res) => {
 
 app.put('/api/v1/todos/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
-    let todoFound;
-    let itemIndex;
-    db.map((todo, index) => {
-        if (todo.id === id) {
-            todoFound = todo;
-            itemIndex = index;
-        }
-    });
 
-    if (!todoFound) {
-        return res.status(404).send({
-            success: 'false',
-            message: 'todo not found',
-        });
+    const findById = {
+        name: 'findById',
+        text: 'select id, title, description from todo where id = $1',
+        values: [id]
     }
 
-    let content = req.body;
-    console.log(content.title);
-    console.log(content.description);
+    client.query(findById)
+        .then(rs => {
+            if (rs.rows.length == 1) {
+                let row = rs.rows[0];
+                let content = req.body;
 
-    if (!req.body.title) {
-        return res.status(400).send({
-            success: 'false',
-            message: 'title is required',
-        });
-    } else if (!req.body.description) {
-        return res.status(400).send({
-            success: 'false',
-            message: 'description is required',
-        });
-    }
+                if (!content.title) {
+                    return res.status(400).send({
+                        success: 'false',
+                        message: 'title is required',
+                    });
+                } else if (!content.description) {
+                    return res.status(400).send({
+                        success: 'false',
+                        message: 'description is required',
+                    });
+                }
 
-    const updatedTodo = {
-        id: todoFound.id,
-        title: req.body.title || todoFound.title,
-        description: req.body.description || todoFound.description,
-    };
+                const query = {
+                    name: 'update',
+                    text: 'update todo set title = $1, description = $2 where id = $3',
+                    values: [row.title, row.description, row.id]
+                }
 
-    db.splice(itemIndex, 1, updatedTodo);
-
-    return res.status(201).send({
-        success: 'true',
-        message: 'todo added successfully',
-        updatedTodo,
-    });
+                client.query(query)
+                    .then(rs => {
+                        return res.status(201).send({
+                            success: 'true',
+                            message: 'todo updated successfully'
+                        });
+                    })
+                    .catch(e => {
+                        console.error(e);
+                        return res.status(500).send({
+                            success: 'false',
+                            message: e.message
+                        })
+                    })
+            } else if (rs.rows.length == 0) {
+                return res.status(404).send({
+                    success: 'false',
+                    message: 'todo does not exist',
+                });
+            } else {
+                return res.status(500).send({
+                    success: 'false',
+                    message: 'More than one row found!'
+                })
+            }
+        })
+        .catch(e => {
+            console.error(e);
+            return res.status(500).send({
+                success: 'false',
+                message: e.message
+            })
+        })
 });
 
 app.delete('/api/v1/todos/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
 
-    db.map((todo, index) => {
-        if (todo.id === id) {
-            db.splice(index, 1);
+    const query = {
+        name: 'delete',
+        text: 'delete from todo where id = $1',
+        values: [id]
+    }
+
+    client.query(query)
+        .then(rs => {
             return res.status(200).send({
                 success: 'true',
-                message: 'Todo deleted successfuly',
+                message: 'todo deleted successfully'
             });
-        }
-    });
-
-    return res.status(404).send({
-        success: 'false',
-        message: 'todo not found',
-    });
-
-
+        })
+        .catch(e => {
+            console.error(e);
+            return res.status(500).send({
+                success: 'false',
+                message: e.message
+            })
+        })
 });
 
 const PORT = 5000;
