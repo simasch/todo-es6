@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-const todoApi = new TodoController(app);
+const todoController = new TodoController(app);
 
 const PORT = 5000;
 
