@@ -10,9 +10,6 @@ export default class TodoApi {
             this.todoRepository.findAll()
                 .then((todos) => {
                     return res.status(200).json(todos);
-                })
-                .catch(e => {
-                    return this.serverError(e, res);
                 });
         });
 
@@ -26,9 +23,6 @@ export default class TodoApi {
                     } else {
                         return this.notFound(res);
                     }
-                })
-                .catch(e => {
-                    return this.serverError(e, res);
                 });
         });
 
@@ -54,9 +48,6 @@ export default class TodoApi {
                         success: 'true',
                         message: 'Todo created',
                     });
-                })
-                .catch(e => {
-                    return this.serverError(e, res);
                 });
         });
 
@@ -85,9 +76,6 @@ export default class TodoApi {
                                 success: 'true',
                                 message: 'Todo update',
                             });
-                        })
-                        .catch(e => {
-                            return this.serverError(e, res);
                         });
                 } else {
                     return this.notFound(res);
@@ -108,23 +96,12 @@ export default class TodoApi {
                                 success: 'true',
                                 message: 'todo deleted successfully'
                             });
-                        })
-                        .catch(e => {
-                            return this.serverError(e, res);
                         });
                 } else {
                     return this.notFound(res);
                 }
             });
         });
-    }
-
-    serverError(e, res) {
-        console.error(e);
-        return res.status(500).json({
-            success: 'false',
-            message: e.message
-        })
     }
 
     notFound(res) {
