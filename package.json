@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js --inspect --exec babel-node --"
+    "start": "nodemon src/app.js --inspect --exec babel-node --",
+    "babel": "npx babel src --out-dir build"
   },
   "author": "Simon Martinelli",
   "license": "Apache-2.0",
