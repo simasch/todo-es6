@@ -15,7 +15,7 @@ export default class TodoRepository {
                     resolve(this.convertToTodo(data));
                 })
                 .catch(reason => {
-                    reject(reason)
+                    reject(reason);
                 });
         });
     }
