@@ -5,8 +5,7 @@
   "main": "src/app.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-modules src/app.mjs --inspect",
-    "babel": "npx babel src --out-dir build"
+    "start": "node --experimental-modules src/app.mjs --inspect"
   },
   "author": "Simon Martinelli",
   "license": "Apache-2.0",

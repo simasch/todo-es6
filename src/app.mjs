@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import todoController from './todo/todoController';
+import todoRouter from './todo/todoController';
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/v1/todos', todoController);
+app.use('/api/v1/todos', todoRouter);
 
 app.use((err, req, res, next) => {
     if (res.headersSent) {

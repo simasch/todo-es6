@@ -1,6 +1,5 @@
 import express from 'express';
 import TodoRepository from './todoRepository';
-import Todo from './todo';
 
 let router = express.Router();
 let todoRepository = new TodoRepository();
@@ -38,7 +37,7 @@ router.post('/', async (req, res, next) => {
         if (message.length > 0) {
             return res.status(400).json({message: message});
         } else {
-            const id = await todoRepository.insert(new Todo(null, req.body.title, req.body.description));
+            const id = await todoRepository.insert({title: req.body.title, description: req.body.description});
 
             return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).end();
         }
@@ -58,7 +57,7 @@ router.put('/:id', async (req, res, next) => {
 
             let todo = await todoRepository.findById(id);
             if (todo) {
-                await todoRepository.update(new Todo(todo.id, req.body.title, req.body.description));
+                await todoRepository.update({id: todo.id, title: req.body.title, description: req.body.description});
 
                 return res.status(204).end();
             } else {

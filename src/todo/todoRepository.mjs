@@ -1,4 +1,3 @@
-import Todo from './todo';
 import pgp from 'pg-promise';
 
 export default class TodoRepository {
@@ -8,17 +7,11 @@ export default class TodoRepository {
     }
 
     async findAll() {
-        const data = await this.db.any('SELECT id, title, description FROM todo ORDER BY id');
-        return this.convertToTodo(data);
+        return await this.db.any('SELECT id, title, description FROM todo ORDER BY id');
     }
 
     async findById(id) {
-        const data = await this.db.oneOrNone('SELECT id, title, description FROM todo WHERE id = $1', [id]);
-        if (data) {
-            return new Todo(data.id, data.title, data.description);
-        } else {
-            return null;
-        }
+        return await this.db.oneOrNone('SELECT id, title, description FROM todo WHERE id = $1', [id]);
     }
 
     async insert(todo) {
@@ -47,14 +40,6 @@ export default class TodoRepository {
             .tx(async t => {
                 await t.none('DELETE FROM todo WHERE id = $1', [id]);
             });
-    }
-
-    convertToTodo(data) {
-        let todos = [];
-        for (let row of data) {
-            todos.push(new Todo(row.id, row.title, row.description))
-        }
-        return todos;
     }
 
 }
