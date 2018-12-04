@@ -9,6 +9,9 @@ router.get('/', (req, res) => {
     todoRepository.findAll()
         .then((todos) => {
             return res.status(200).json(todos);
+        })
+        .catch(reason => {
+            return handleCatch(reason, res);
         });
 });
 
@@ -22,6 +25,9 @@ router.get('/:id', (req, res) => {
             } else {
                 return res.status(404).end();
             }
+        })
+        .catch(reason => {
+            return handleCatch(reason, res);
         });
 });
 
@@ -36,6 +42,9 @@ router.post('/', (req, res) => {
         todoRepository.insert(new Todo(null, req.body.title, req.body.description))
             .then((id) => {
                 return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).end();
+            })
+            .catch(reason => {
+                return handleCatch(reason, res);
             });
     }
 });
@@ -50,36 +59,50 @@ router.put('/:id', (req, res) => {
     } else {
         const id = parseInt(req.params.id, 10);
 
-        todoRepository.findById(id).then((todo) => {
-            if (todo) {
-                const todo = new Todo(id, req.body.title, req.body.description);
+        todoRepository.findById(id)
+            .then((todo) => {
+                if (todo) {
+                    const todo = new Todo(id, req.body.title, req.body.description);
 
-                todoRepository.update(todo)
-                    .then((todo) => {
-                        return res.status(204).end();
-                    });
-            } else {
-                return res.status(404).end();
-            }
-        });
+                    todoRepository.update(todo)
+                        .then((todo) => {
+                            return res.status(204).end();
+                        })
+                        .catch(reason => {
+                            return handleCatch(reason, res);
+                        });
+                } else {
+                    return res.status(404).end();
+                }
+            })
+            .catch(reason => {
+                return handleCatch(reason, res);
+            });
     }
 });
 
 router.delete('/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
 
-    todoRepository.findById(id).then((todo) => {
-        if (todo) {
-            const todo = new Todo(id, req.body.title, req.body.description);
+    todoRepository.findById(id)
+        .then((todo) => {
+            if (todo) {
+                const todo = new Todo(id, req.body.title, req.body.description);
 
-            todoRepository.deleteById(id)
-                .then(rs => {
-                    return res.status(204).end();
-                });
-        } else {
-            return res.status(404).end();
-        }
-    });
+                todoRepository.deleteById(id)
+                    .then(rs => {
+                        return res.status(204).end();
+                    })
+                    .catch(reason => {
+                        return handleCatch(reason, res);
+                    });
+            } else {
+                return res.status(404).end();
+            }
+        })
+        .catch(reason => {
+            return handleCatch(reason, res);
+        });
 })
 
 function validate(body) {
@@ -93,5 +116,9 @@ function validate(body) {
     return message;
 }
 
+function handleCatch(reason, res) {
+    console.log(reason);
+    return res.status(500).end();
+}
 
 module.exports = router;

@@ -6,11 +6,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-const urlLogger = (req, res, next) => {
-    console.log(req.url);
+app.use((req, res, next) => {
+    console.log(req.method + ' ' + req.url);
     next();
-}
-app.use(urlLogger());
+});
 
 app.use('/api/v1/todos', todoController);
 
