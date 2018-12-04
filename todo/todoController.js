@@ -20,7 +20,7 @@ router.get('/:id', (req, res) => {
             if (todo) {
                 return res.status(200).json(todo);
             } else {
-                return notFound(res);
+                return res.status(404);
             }
         });
 });
@@ -29,12 +29,10 @@ router.post('/', (req, res) => {
 
     if (!req.body.title) {
         return res.status(400).json({
-            success: 'false',
             message: 'title is required'
         });
     } else if (!req.body.description) {
         return res.status(400).json({
-            success: 'false',
             message: 'description is required'
         });
     }
@@ -43,22 +41,17 @@ router.post('/', (req, res) => {
 
     todoRepository.insert(todo)
         .then((id) => {
-            return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).json({
-                success: 'true',
-                message: 'Todo created',
-            });
+            return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id);
         });
 });
 
 router.put('/:id', (req, res) => {
     if (!req.body.title) {
         return res.status(400).json({
-            success: 'false',
             message: 'title is required'
         });
     } else if (!req.body.description) {
         return res.status(400).json({
-            success: 'false',
             message: 'description is required'
         });
     }
@@ -72,12 +65,11 @@ router.put('/:id', (req, res) => {
             todoRepository.update(todo)
                 .then((todo) => {
                     return res.status(200).json({
-                        success: 'true',
                         message: 'Todo update',
                     });
                 });
         } else {
-            return notFound(res);
+            return res.status(404);
         }
     });
 });
@@ -92,22 +84,13 @@ router.delete('/:id', (req, res) => {
             todoRepository.deleteById(id)
                 .then(rs => {
                     return res.status(200).json({
-                        success: 'true',
                         message: 'todo deleted successfully'
                     });
                 });
         } else {
-            return notFound(res);
+            return res.status(404);
         }
     });
 })
-
-
-function notFound(res) {
-    return res.status(404).json({
-        success: 'false',
-        message: 'Todo does not exist',
-    });
-}
 
 module.exports = router;
