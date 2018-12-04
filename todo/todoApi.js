@@ -70,7 +70,7 @@ export default class TodoApi {
                 if (todo) {
                     const todo = new Todo(id, req.body.title, req.body.description);
 
-                    todoRepository.update(todo)
+                    this.todoRepository.update(todo)
                         .then((todo) => {
                             return res.status(200).json({
                                 success: 'true',
@@ -90,7 +90,7 @@ export default class TodoApi {
                 if (todo) {
                     const todo = new Todo(id, req.body.title, req.body.description);
 
-                    todoRepository.deleteById(id)
+                    this.todoRepository.deleteById(id)
                         .then(rs => {
                             return res.status(200).json({
                                 success: 'true',
@@ -104,7 +104,7 @@ export default class TodoApi {
         });
     }
 
-    notFound(res) {
+    static notFound(res) {
         return res.status(404).json({
             success: 'false',
             message: 'Todo does not exist',
