@@ -45,15 +45,14 @@ export default class TodoRepository {
                     } else {
                         client.query('select id, title, description from todo where id = $1', [id])
                             .then(rs => {
+                                release();
+
                                 if (rs.rows.length === 1) {
                                     let row = rs.rows[0];
-                                    release();
                                     resolve(new Todo(row.id, row.title, row.description));
                                 } else if (rs.rows.length === 0) {
-                                    release();
                                     resolve(null);
                                 } else {
-                                    release();
                                     reject('More than one row found!');
                                 }
                             })
@@ -78,11 +77,10 @@ export default class TodoRepository {
                     const values = [todo.title, todo.description];
 
                     client.query(text, values, (err, res) => {
+                        release();
                         if (err) {
-                            release();
                             reject(err);
                         } else {
-                            release();
                             resolve(res.rows[0]);
                         }
                     });
