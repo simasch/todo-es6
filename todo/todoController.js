@@ -20,58 +20,51 @@ router.get('/:id', (req, res) => {
             if (todo) {
                 return res.status(200).json(todo);
             } else {
-                return res.status(404);
+                return res.status(404).send();
             }
         });
 });
 
 router.post('/', (req, res) => {
+    let message = validate(req.body);
 
-    if (!req.body.title) {
+    if (message.length > 0) {
         return res.status(400).json({
-            message: 'title is required'
+            message: message
         });
-    } else if (!req.body.description) {
-        return res.status(400).json({
-            message: 'description is required'
-        });
+    } else {
+        todoRepository.insert(new Todo(null, req.body.title, req.body.description))
+            .then((id) => {
+                return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).send();
+            });
     }
-
-    const todo = new Todo(null, req.body.title, req.body.description);
-
-    todoRepository.insert(todo)
-        .then((id) => {
-            return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id);
-        });
 });
 
 router.put('/:id', (req, res) => {
-    if (!req.body.title) {
+    let message = validate(req.body);
+
+    if (message.length > 0) {
         return res.status(400).json({
-            message: 'title is required'
+            message: message
         });
-    } else if (!req.body.description) {
-        return res.status(400).json({
-            message: 'description is required'
+    } else {
+        const id = parseInt(req.params.id, 10);
+
+        todoRepository.findById(id).then((todo) => {
+            if (todo) {
+                const todo = new Todo(id, req.body.title, req.body.description);
+
+                todoRepository.update(todo)
+                    .then((todo) => {
+                        return res.status(200).json({
+                            message: 'Todo update',
+                        });
+                    });
+            } else {
+                return res.status(404).send();
+            }
         });
     }
-
-    const id = parseInt(req.params.id, 10);
-
-    todoRepository.findById(id).then((todo) => {
-        if (todo) {
-            const todo = new Todo(id, req.body.title, req.body.description);
-
-            todoRepository.update(todo)
-                .then((todo) => {
-                    return res.status(200).json({
-                        message: 'Todo update',
-                    });
-                });
-        } else {
-            return res.status(404);
-        }
-    });
 });
 
 router.delete('/:id', (req, res) => {
@@ -83,14 +76,24 @@ router.delete('/:id', (req, res) => {
 
             todoRepository.deleteById(id)
                 .then(rs => {
-                    return res.status(200).json({
-                        message: 'todo deleted successfully'
-                    });
+                    return res.status(200).send();
                 });
         } else {
-            return res.status(404);
+            return res.status(404).send();
         }
     });
 })
+
+function validate(body) {
+    let message = '';
+    if (!body.title) {
+        message += 'Title is required'
+    }
+    if (!body.description) {
+        message += 'Description is required'
+    }
+    return message;
+}
+
 
 module.exports = router;
