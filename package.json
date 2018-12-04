@@ -2,10 +2,10 @@
   "name": "todo",
   "version": "1.0.0",
   "description": "TODO sample application",
-  "main": "src/app.js",
+  "main": "src/app.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js --inspect --exec babel-node --",
+    "start": "node --experimental-modules src/app.mjs --inspect",
     "babel": "npx babel src --out-dir build"
   },
   "author": "Simon Martinelli",
@@ -17,8 +17,6 @@
     "pg-promise": "8.5.3"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-preset-env": "1.7.0",
     "nodemon": "1.18.7"
   }
 }

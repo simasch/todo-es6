@@ -1,11 +1,10 @@
 import Todo from './todo';
-
-const pgp = require('pg-promise')();
+import pgp from 'pg-promise';
 
 export default class TodoRepository {
 
     constructor() {
-        this.db = pgp({database: 'todo', user: 'todo', password: 'todo'});
+        this.db = pgp()({database: 'todo', user: 'todo', password: 'todo'});
     }
 
     async findAll() {

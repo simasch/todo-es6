@@ -98,4 +98,4 @@ function validate(body) {
     return message;
 }
 
-module.exports = router;
+export default router;
