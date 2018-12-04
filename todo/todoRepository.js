@@ -16,7 +16,7 @@ export default class TodoRepository {
                         release();
                         reject(err);
                     } else {
-                        client.query('select id, title, description from todo order by id')
+                        client.query('SELECT id, title, description FROM todo ORDER BY id')
                             .then(rs => {
                                 release();
                                 resolve(this.convertRsToTodos(rs));
@@ -38,7 +38,7 @@ export default class TodoRepository {
                         release();
                         reject(err);
                     } else {
-                        client.query('select id, title, description from todo where id = $1', [id])
+                        client.query('SELECT id, title, description FROM todo WHERE id = $1', [id])
                             .then(rs => {
                                 release();
                                 if (rs.rows.length === 1) {
@@ -93,7 +93,7 @@ export default class TodoRepository {
                     release();
                     reject(err);
                 } else {
-                    client.query('update todo set title = $1, description = $2 where id = $3', [todo.title, todo.description, todo.id])
+                    client.query('UPDATE todo SET title = $1, description = $2 WHERE id = $3', [todo.title, todo.description, todo.id])
                         .then(rs => {
                             release();
                             resolve(todo);
@@ -114,7 +114,7 @@ export default class TodoRepository {
                     release();
                     reject(err);
                 } else {
-                    client.query('delete from todo where id = $1', [id])
+                    client.query('DELETE FROM todo WHERE id = $1', [id])
                         .then(rs => {
                             release();
                             resolve();
