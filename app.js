@@ -54,7 +54,7 @@ app.post('/api/v1/todos', (req, res) => {
         });
     }
 
-    const todo = new Todo(req.body.title, req.body.description);
+    const todo = new Todo(null, req.body.title, req.body.description);
 
     todoRepository.insert(todo)
         .then((todo) => {
