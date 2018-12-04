@@ -1,7 +1,7 @@
 import TodoRepository from './todoRepository';
 import Todo from './todo';
 
-export default class TodoApi {
+export default class TodoController {
 
     constructor(app) {
         this.todoRepository = new TodoRepository();

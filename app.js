@@ -1,12 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import TodoApi from './todo/todoApi';
+import TodoController from './todo/todoController';
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-const todoApi = new TodoApi(app);
+const todoApi = new TodoController(app);
 
 const PORT = 5000;
 
