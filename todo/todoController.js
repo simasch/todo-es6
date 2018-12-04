@@ -42,8 +42,8 @@ router.post('/', (req, res) => {
     const todo = new Todo(null, req.body.title, req.body.description);
 
     todoRepository.insert(todo)
-        .then((todo) => {
-            return res.status(201).json({
+        .then((id) => {
+            return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).json({
                 success: 'true',
                 message: 'Todo created',
             });
@@ -110,4 +110,4 @@ function notFound(res) {
     });
 }
 
-export default router;
+module.exports = router;

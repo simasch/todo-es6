@@ -18,13 +18,8 @@ export default class TodoRepository {
                     } else {
                         client.query('select id, title, description from todo order by id')
                             .then(rs => {
-                                let todos = [];
-                                let rows = rs.rows;
-                                for (let row of rows) {
-                                    todos.push(new Todo(row.id, row.title, row.description))
-                                }
                                 release();
-                                resolve(todos);
+                                resolve(this.convertRsToTodos(rs));
                             })
                             .catch(e => {
                                 release();
@@ -46,7 +41,6 @@ export default class TodoRepository {
                         client.query('select id, title, description from todo where id = $1', [id])
                             .then(rs => {
                                 release();
-
                                 if (rs.rows.length === 1) {
                                     let row = rs.rows[0];
                                     resolve(new Todo(row.id, row.title, row.description));
@@ -73,17 +67,20 @@ export default class TodoRepository {
                     release();
                     reject(err);
                 } else {
-                    const text = 'INSERT INTO todo(title, description) VALUES($1, $2) RETURNING *';
-                    const values = [todo.title, todo.description];
-
-                    client.query(text, values, (err, res) => {
-                        release();
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(res.rows[0]);
-                        }
-                    });
+                    client.query('INSERT INTO todo(title, description) VALUES($1, $2) RETURNING id', [todo.title, todo.description])
+                        .then(rs => {
+                            release();
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(rs.rows[0].id);
+                            }
+                        })
+                        .catch(e => {
+                            release();
+                            reject(e);
+                        })
+                    ;
                 }
             });
         });
@@ -96,8 +93,7 @@ export default class TodoRepository {
                     release();
                     reject(err);
                 } else {
-                    client.query('update todo set title = $1, description = $2 where id = $3',
-                        [todo.title, todo.description, todo.id])
+                    client.query('update todo set title = $1, description = $2 where id = $3', [todo.title, todo.description, todo.id])
                         .then(rs => {
                             release();
                             resolve(todo);
@@ -131,4 +127,13 @@ export default class TodoRepository {
             });
         });
     }
+
+    convertRsToTodos(rs) {
+        let todos = [];
+        for (let row of rs.rows) {
+            todos.push(new Todo(row.id, row.title, row.description))
+        }
+        return todos;
+    }
+
 }

@@ -1,3 +1,33 @@
+POST http://localhost:5000/api/v1/todos
+Content-Type: application/json
+
+{
+  "title": "Book flight",
+  "description": "ZRH - AUS"
+}
+
+<> 2018-12-04T104101.201.json
+
+###
+
+GET http://localhost:5000/api/v1/todos
+
+<> 2018-12-04T103934.200.json
+
+###
+
+GET http://localhost:5000/api/v1/todos
+
+<> 2018-12-04T103826.200.json
+
+###
+
+GET http://localhost:5000/api/v1/todos
+
+<> 2018-12-04T102729.200.json
+
+###
+
 GET http://localhost:5000/api/v1/todos
 
 <> 2018-12-04T101531.200.json
