@@ -48,7 +48,6 @@ export default class TodoRepository {
             .tx(async t => {
                 await t.none('DELETE FROM todo WHERE id = $1', [id]);
             });
-        return;
     }
 
     convertToTodo(data) {
