@@ -20,7 +20,7 @@ router.get('/:id', (req, res) => {
             if (todo) {
                 return res.status(200).json(todo);
             } else {
-                return res.status(404).send();
+                return res.status(404).end();
             }
         });
 });
@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
     } else {
         todoRepository.insert(new Todo(null, req.body.title, req.body.description))
             .then((id) => {
-                return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).send();
+                return res.status(201).header('Location', 'http://localhost:5000/api/v1/todos/' + id).end();
             });
     }
 });
@@ -56,10 +56,10 @@ router.put('/:id', (req, res) => {
 
                 todoRepository.update(todo)
                     .then((todo) => {
-                        return res.status(204).send();
+                        return res.status(204).end();
                     });
             } else {
-                return res.status(404).send();
+                return res.status(404).end();
             }
         });
     }
@@ -74,10 +74,10 @@ router.delete('/:id', (req, res) => {
 
             todoRepository.deleteById(id)
                 .then(rs => {
-                    return res.status(204).send();
+                    return res.status(204).end();
                 });
         } else {
-            return res.status(404).send();
+            return res.status(404).end();
         }
     });
 })
