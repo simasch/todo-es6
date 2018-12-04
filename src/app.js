@@ -11,7 +11,16 @@ app.use((req, res, next) => {
     next();
 });
 
+
 app.use('/api/v1/todos', todoController);
+
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+    console.log(err);
+    res.status(500).end();
+});
 
 const PORT = 5000;
 
