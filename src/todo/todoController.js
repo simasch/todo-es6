@@ -56,9 +56,7 @@ router.put('/:id', (req, res) => {
 
                 todoRepository.update(todo)
                     .then((todo) => {
-                        return res.status(200).json({
-                            message: 'Todo update',
-                        });
+                        return res.status(204).send();
                     });
             } else {
                 return res.status(404).send();
@@ -76,7 +74,7 @@ router.delete('/:id', (req, res) => {
 
             todoRepository.deleteById(id)
                 .then(rs => {
-                    return res.status(200).send();
+                    return res.status(204).send();
                 });
         } else {
             return res.status(404).send();
